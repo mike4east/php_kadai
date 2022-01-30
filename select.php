@@ -1,11 +1,7 @@
 <?php
 //1.  DB接続します
-try {
-  //Password:MAMP='root',XAMPP=''
-  $pdo = new PDO('mysql:dbname=php02_kadai;charset=utf8;host=localhost','root','root');
-} catch (PDOException $e) {
-  exit('DBConnectError:'.$e->getMessage());
-}
+require_once('funcs.php');
+$pdo = db_conn();
 
 //２．SQL文を用意(データ取得：SELECT)
 $stmt = $pdo->prepare("SELECT * FROM gs_bm_table");
@@ -17,16 +13,23 @@ $status = $stmt->execute();
 $view="";
 // ↑javascriptでやってこなかった部分
 if($status==false) {
-    //execute（SQL実行時にエラーがある場合）
-  $error = $stmt->errorInfo();
-  exit("ErrorQuery:".$error[2]);
+  sql_error($status);
 
 }else{
   //Selectデータの数だけ自動でループしてくれる
   //FETCH_ASSOC=http://php.net/manual/ja/pdostatement.fetch.php
   while( $result = $stmt->fetch(PDO::FETCH_ASSOC)){ 
     $view .= "<p>";
-    $view .= $result['indate']."<br/>\n".$result['name'].' url:'.$result['bookurl']."<br/>\n".$result['comment'];
+
+    $view .= '<a href="detail.php?id='.$result['id'].'">'; //ここが難しい！！id=シングルクオーテーション
+
+    $view .= $result["indate"] . "：" . $result["name"];
+    $view .= '</a>';
+
+    $view .= '<a href="delete.php?id='.$result['id'].'">'; //追記
+    $view .= '　[削除]';
+    $view .= '</a>';
+    
     $view .= "</p>";
   }
   // for文じゃなくてwhile文の方が主流
