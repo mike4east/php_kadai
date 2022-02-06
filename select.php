@@ -1,6 +1,20 @@
 <?php
+
+//SESSIONスタート
+session_start();
+
+
 //1.  DB接続します
 require_once('funcs.php');
+
+//ログインチェック ログインされていれば、次に進める関数
+loginCheck();
+
+//以下ログインユーザーのみ
+$user_name = $_SESSION['name'];
+$kanri_flg = $_SESSION['kanri_flg'];//0が一般で1が管理者
+
+
 $pdo = db_conn();
 
 //２．SQL文を用意(データ取得：SELECT)
